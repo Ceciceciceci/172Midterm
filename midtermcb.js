@@ -6,29 +6,29 @@ var repl = require('repl');
 var underscore = require('underscore');
 var sa = require('superagent');
 var fs = require('fs');
+var coinbaseurl = "https://api.coinbase.com/v1/currencies/exchange_rates";
 
 //csv
 var csvpart = require('fast-csv');
 
 //currency exchange
-var coinbaseurl = "https://api.coinbase.com/v1/currencies/exchange_rates";
-var units = request.get('https://api.coinbase.com/v1/currencies').set('Accept', 'application/json').end(
-        function(error, response){
+var units = sa.get('https://api.coinbase.com/v1/currencies').set('Accept', 'application/json').end(function(error, response){
             units = response.body;
         });
 
 //Prompt for REPL
 var r = repl.start({
-    prompt: 'Coinbase repl >> ',
+    prompt: "Coinbase repl> ",
+    ignoreUndefined: true,
     eval: callbackFunc});
 
 function callbackFunc(cmd, context, filename, callback){
     var cmds = cmd.split(' ');
-    var args = cmds[0].trim().toUpperCase();
-    switch(upperargs) {
-        case "ORDER": ORDER(); break;    
+    var exec = cmds[0].trim().toUpperCase();
+    switch(exec) {   
         case "BUY": BUY(cmds); break;
         case "SELL": SELL(cmds); break;
+        case "ORDER": ORDER(); break; 
     }
     return;
 }

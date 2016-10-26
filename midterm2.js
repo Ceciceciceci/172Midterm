@@ -6,46 +6,31 @@ var repl = require('repl');
 var underscore = require('underscore');
 var sa = require('superagent');
 var fs = require('fs');
-var coinbaseurl = "https://api.coinbase.com/v1/currencies/exchange_rates";
 
 //csv
 var csvpart = require('fast-csv');
 
 //currency exchange
-<<<<<<< HEAD
 var coinbaseurl = "https://api.coinbase.com/v1/currencies/exchange_rates";
 var units = sa.get('https://api.coinbase.com/v1/currencies').set('Accept', 'application/json').end(
         function(error, response){
-=======
-var units = sa.get('https://api.coinbase.com/v1/currencies').set('Accept', 'application/json').end(function(error, response){
->>>>>>> 5a8f1339fcfc7e5cd966a15e3c3fedc92ce2f5d3
             units = response.body;
         });
 
 //Prompt for REPL
 var r = repl.start({
-<<<<<<< HEAD
     prompt: 'Coinbase repl >> ',
-=======
-    prompt: "Coinbase repl> ",
->>>>>>> 5a8f1339fcfc7e5cd966a15e3c3fedc92ce2f5d3
     ignoreUndefined: true,
     eval: callbackFunc});
 
 
 function callbackFunc(cmd, context, filename, callback){
     var cmds = cmd.split(' ');
-<<<<<<< HEAD
     var args = cmds[0].trim().toUpperCase();
     switch(args) {
         case "ORDERS": ORDERS(); break;    
-=======
-    var exec = cmds[0].trim().toUpperCase();
-    switch(exec) {   
->>>>>>> 5a8f1339fcfc7e5cd966a15e3c3fedc92ce2f5d3
         case "BUY": BUY(cmds); break;
         case "SELL": SELL(cmds); break;
-        case "ORDER": ORDER(); break; 
     }
     return;
 }

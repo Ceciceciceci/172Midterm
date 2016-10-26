@@ -28,7 +28,7 @@ function callbackFunc(cmd, context, filename, callback){
     var cmds = cmd.split(' ');
     var args = cmds[0].trim().toUpperCase();
     switch(args) {
-        case "ORDERS": ORDERS(); break;    
+        case "ORDER": ORDER(); break;    
         case "BUY": BUY(cmds); break;
         case "SELL": SELL(cmds); break;
     }
@@ -38,14 +38,14 @@ function callbackFunc(cmd, context, filename, callback){
 // Get currency exchange ratio
 function curexchange(amt, cur, type){
     var order = type + " " + amt + " " + cur + " ";
-    sa.get(coinbaseurl).set('Accept', 'application/json').end(
+    request.get(coinbaseurl).set('Accept', 'application/json').end(
         function(error, response){
             var jsonresp = response.body;
             
             //currency key check
             if (cur != null){
-                var currency_btc = cur.toLowerCase() + "_to_btc";
-                var btc_currency = "btc_to_" + cur.toLowerCase();
+                var currency_btc = currency.toLowerCase() + "_to_btc";
+                var btc_currency = "btc_to_" + currency.toLowerCase();
                 
                 var rate1 = getRate(jsonresp, currency_btc);             
                 var rate2 = getRate(jsonresp, btc_currency);
@@ -56,10 +56,10 @@ function curexchange(amt, cur, type){
             var output = " CURRENT ORDERS \n";    
             var orderdisplay = "Order to" + order + " worth of BTC queued @ " + rate1 + " " + "BTC/" + cur.toUpperCase() + " ("	+ rate2 + " BTC)\n"; 
 		
-		  anotherOrder(type, amt, cur);
+		  anotherOrder(type, amount, currency);
           console.log(output);
 		  console.log(orderdisplay);
-            }
+            }i
             
         });
         return ;
@@ -82,28 +82,27 @@ function anotherOrder(amt, cur, type){
     
     var pushOrder = {
         'timestamp': new Date(),
-        'type': type,
-        'amt': amt,
-        'cur': cur,
+        'action': action.toUpperCase(),
+        'amount': amount,
+        'currency': cur.toUpperCase(),
         'status': 'UNFILLED'
     }
     orders.push(pushOrder);
 }
 
-function validCurrency(amt, type, cur){
-    console.log("Cur" + cur + "\n");
+function validCurrency(amt, cur, type){
     var check = false;
     underscore.filter(units, function(error, index){
         if (units[index][1] === cur) {
             check = true;
-            curexchange(amt, cur, type);
+            curexchange(amt, cur.toLowerCase(), type);
             return;
         }
     });
     
     //error check
     if (check === false){
-        console.log("Order error: There's no BTC exchange rate for " + cur + "\n");
+        console.log("Order error: There's no BTC exchange rate /n" + cur);
     }
     return;
 }
@@ -113,15 +112,15 @@ function validCurrency(amt, type, cur){
 function BUY(args){
     var amt = args[1].trim();
     var type = args[0].trim().toUpperCase();
-    //var cur= args[2].trim().toUpperCase();
+    var cur= args[2].trim().toUpperCase();
     
     if (args[2] != null){
-	var cur = args[2].trim().toUpperCase();
+	
         validCurrency(amt, type, cur);
     }
     else if (args[2] == null){
         if (args[1] > 0){
-            var orderDisplay = "Order to " + type + " " + amt + "BTC in queue\n";
+            var orderDisplay = "Order to " + action + " " + amount + "BTC in queue\n";
             anotherOrder(amt, type, null);
             console.log(orderDisplay);
         }
@@ -137,16 +136,15 @@ function BUY(args){
 function SELL (args){
     var amt = args[1].trim();
     var type = args[0].trim().toUpperCase();
-    //var cur= args[2].trim().toUpperCase();
+    var cur= args[2].trim().toUpperCase();
  
     if (args[2] != null){
-        var cur = args[2].trim().toUpperCase();
-	validCurrency(amt, type, cur);
+        validCurrency(amt, type, cur);
     }
     else if (args[2] == null){
         if (args[1] > 0){
-            var orderDisplay = "Order to " + type + " " + amt + "BTC in queue\n";
-            anotherOrder(type, amt, null);
+            var orderDisplay = "Order to " + action + " " + amount + "BTC in queue\n";
+            anotherOrder(amt, type, null);
             console.log(orderDisplay);
         }
         //if the order fails!! ,error msg, chef
@@ -160,8 +158,8 @@ function SELL (args){
 
 //CVS and ORDERS
 var csvfile = "orders.csv";
-function ORDERS(args){
-    var csvStream = csvpart.format({headers: true, quoteHeaders: true}),
+function ORDER(args){
+    var csv = csv.format({headers: true, quoteHeaders: true}),
         writeableStream = fs.createWriteStream(csvfile);
         writeableStream.on("finish", 
             function(){ console.log("Saved orders.")});

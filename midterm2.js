@@ -74,23 +74,23 @@ function getRate(json, unit){
 }
 
 var orders = [];
-function anotherOrder(amt, cur, type){
+function anotherOrder(type, amt, cur){
     var btctext = "BTC";
     if (cur != null){
-        cur = type;
+        btctext = cur;
     } 
     
     var pushOrder = {
         'timestamp': new Date(),
         'type': type,
         'amt': amt,
-        'cur': cur,
+        'cur': btctext,
         'status': 'UNFILLED'
     }
     orders.push(pushOrder);
 }
 
-function validCurrency(amt, type, cur){
+function validCurrency(type, amt, cur){
     console.log("Cur" + cur + "\n");
     var check = false;
     underscore.filter(units, function(error, index){
@@ -158,6 +158,7 @@ function SELL (args){
     
 }
 
+
 //CVS and ORDERS
 var csvfile = "orders.csv";
 function ORDERS(args){
@@ -166,14 +167,14 @@ function ORDERS(args){
         writeableStream.on("finish", 
             function(){ console.log("Saved orders.")});
                 csvStream.pipe(writeableStream);
-                console.log("/n ALL ORDERS: /n");
+                console.log("\n ALL ORDERS: \n");
                 underscore.each(orders,
                     function(error, index){
                         order = orders[index];
-                        orderDisplay = order.timestamp +  ": " + order.type + " " + order.amt + " || " + order.cur + ": " + order.status;
-                    console.log(orderDisplay);
+                        orderDisplay = order.timestamp +  ": " + order.amt + " " + order.type + " " + order.cur + ": " + order.status;
+                    	console.log(orderDisplay);
                     
-                        csvStream.write({time: order.timestamp, type: order.type, type: order.type, cur: order.cur, status: order.status
+                        csvStream.write({time: order.timestamp, type: order.amt, amt: order.type, cur: order.cur, status: order.status
                         
                         })
                     })
